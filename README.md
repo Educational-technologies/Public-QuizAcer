@@ -4,11 +4,12 @@
   - Please contact QuizAcer@gmail.com if you have any problems!
 
 
-  - **This is the public version of the code, Alot is removed for security** 
+  - **This is the public version of the code, a lot is removed for security** 
     -
-    - *Therefore the code will not run, if it is ran it would most likely crash instantly.*
+    - *Therefore the code will not run, if it is run it most likely would crash instantly.*
     
-  - **As said in the License.txt this code is not to be reused or distributed by anyother party**
+  - **As said in the License.txt this code is not to be reused or distributed by any other party**
+  - This project took over 100 hours and 3 months to complete! 
 
 
 #️⃣ QuizAcer.com
