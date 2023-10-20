@@ -1,0 +1,18 @@
+{
+    "$schema": {
+        "Email": "",
+        "Password": "",
+        "service": ""
+    },
+    "no-reply": {
+        "Email": "Redacted",
+        "Password": "Redacted",
+        "AppPassword": "Redacted",
+        "service": "Redacted"
+    },
+    "Support": {
+        "Email": "Redacted",
+        "Password": "Redacted",
+        "service": "Redacted"
+    }
+}

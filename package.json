@@ -1,0 +1,34 @@
+{
+  "name": "certificate-generator",
+  "version": "1.0.0",
+  "main": "Gen.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "adm-zip": "^0.5.10",
+    "bad-words": "^3.0.4",
+    "cookie-encrypter": "^1.0.1",
+    "cookie-parser": "^1.4.6",
+    "crypto": "^1.0.1",
+    "express": "^4.18.2",
+    "express-rate-limit": "^6.7.1",
+    "fs": "^0.0.1-security",
+    "multer": "^1.4.5-lts.1",
+    "nodemailer": "^6.9.4",
+    "openssl-self-signed-certificate": "^1.1.6",
+    "sqlite3": "^5.1.6"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Educational-technologies/PublicSite.git"
+  },
+  "keywords": [],
+  "bugs": {
+    "url": "https://github.com/Educational-technologies/PublicSite/issues"
+  },
+  "homepage": "https://github.com/Educational-technologies/PublicSite#readme",
+  "description": ""
+}

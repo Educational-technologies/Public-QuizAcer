@@ -1,0 +1,480 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="icon" href="/api/images/favicon" type="image/x-icon">
+  <link rel="manifest" href="/manifest.json">
+  <script src="/api/js/serviceworkerinit.js"></script>
+
+  <meta name="language" content="en">
+  <meta name="keywords" content="flashcards, educational tools, interactive learning, study resources">
+  <meta name="description" content="Search through a ton of user made flashcards!">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <meta property="og:title" content="QuizAcer">
+  <meta property="og:description" content="Someone just sent you a flashcard, you better get studing!">
+  <meta property="og:image" content="/api/images/512x512.png">
+  <meta property="og:url" content="https://QuizAcer.com/">
+
+  <title>Flash Card</title>
+  <style>
+    body {
+      margin: 0;
+      padding: 0;
+      font-family: Arial, sans-serif;
+      background-color: #102542;
+      max-height: none;
+    }
+
+    .container {
+      background-color: #102542;
+      height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .box {
+      background-color: #102542;
+      width: 70%;
+      height: 100%;
+      margin: 0 15%;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .title {
+      margin: 2.5% 0 0.1% 15%;
+      font-size: 2vw;
+      font-weight: bold;
+      color: white;
+    }
+
+    .author {
+      margin: 0 0 2.25% 15.5%;
+      font-size: 1vw;
+      color: white;
+    }
+
+    .flash-card {
+      width: 70%;
+      height: 60%;
+      background-color: white;
+      perspective: 10000px;
+      cursor: pointer;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      margin: 0 auto;
+    }
+
+    .card {
+      font-size: .7vw;
+      width: 100%;
+      height: 100%;
+      position: relative;
+      transform-style: preserve-3d;
+      transition: transform 0.3s;
+    }
+
+    .card .side {
+      width: 100%;
+      height: 100%;
+      position: absolute;
+      backface-visibility: hidden;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      white-space: pre-line;
+      /* Allow text to break at new lines */
+    }
+
+
+    .card .front {
+      background-color: #3498db;
+      padding: 2.5%;
+      box-sizing: border-box;
+    }
+
+    .card .back {
+      background-color: #e74c3c;
+      transform: rotateY(180deg);
+      padding: 2.5%;
+      box-sizing: border-box;
+    }
+
+    .navigation {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      width: 70%;
+      margin: 10px 15%;
+      font-size: 24px;
+      padding-bottom: .5%;
+      border-bottom: 2px solid gray;
+    }
+
+    .arrow {
+      border-radius: 50%;
+      background-color: #102542;
+      color: white;
+      border: 1px solid white;
+      box-shadow: none;
+      /* Turn off the box shadow */
+      display: flex;
+      padding: .35%;
+      justify-content: center;
+      align-items: center;
+      font-size: 1vw;
+      cursor: pointer;
+    }
+
+    .arrow:not([disabled]):hover {
+      background-color: #1b4b80;
+      /* Lighter shade for hovering */
+    }
+
+    .arrow[disabled] {
+      color: gray;
+      border-color: gray;
+      cursor: default;
+      /* Change cursor for disabled state */
+    }
+
+    .arrow.left {
+      margin-right: 2%;
+    }
+
+    .arrow.right {
+      margin-left: 2.05%;
+    }
+
+    .counter {
+      font-size: .75vw;
+      color: white;
+    }
+
+    .discription {
+      margin-left: 15%;
+      margin-right: 15%;
+      padding-bottom: 1%;
+      border-bottom: 2px solid gray;
+    }
+
+    .Discription {
+      font-size: 1vw;
+      color: white;
+      padding-bottom: .5%;
+    }
+
+    .discriptionTEXT {
+      font-size: 0.75vw;
+      color: #e74c3c;
+    }
+
+    #copyButton {
+      font-size: 1vw;
+      position: relative;
+      left: 80%;
+      background-color: #102542;
+      color: white;
+      border: 1px solid white;
+      box-shadow: none;
+      border-radius: 15%;
+      cursor: pointer;
+    }
+
+    #shuffleButton {
+      font-size: 1vw;
+      position: relative;
+      left: 80%;
+      background-color: #102542;
+      color: white;
+      border: 1px solid white;
+      box-shadow: none;
+      border-radius: 15%;
+      cursor: pointer;
+    }
+
+    #copyButton:hover {
+      background-color: #1b4b80;
+    }
+
+    .margin {
+      padding-bottom: 3%;
+    }
+
+  </style>
+  <title>Flash Card Site</title>
+</head>
+
+<body onload="loadCardData(0)">
+  <iframe src="/navbar" frameborder="0" scrolling="no" width="100%"></iframe>
+  <div class="container" id="mainContent">
+    <div class="box">
+      <div class="content">
+        <div class="title" id="title">Title</div>
+        <div class="author" id="auth">Author</div>
+      </div>
+      <div class="flash-card">
+        <div class="card">
+          <div class="side front">Front of Card</div>
+          <div class="side back">Back of Card</div>
+        </div>
+      </div>
+      <div class="navigation">
+        <button class="arrow left">←</button>
+        <div class="counter">? / ?</div>
+        <button class="arrow right">→</button>
+      </div>
+      <div class="discription">
+        <div class="Discription">Description:
+          <button id="copyButton">📋</button>
+          <button id="shuffleButton" onclick="shuffle()">🔀</button>
+        </div>
+        <div class="discriptionTEXT" id="dis">HELLO</div>
+      </div>
+      <div class="margin"></div>
+    </div>
+  </div>
+  <script>
+    var cardData = [];
+    let currentCardIndex = 0;
+
+    function loadCardData(tries) {
+      currentCardIndex = 0;
+      const search = window.location.search;
+      const params = new URLSearchParams(search);
+      var id;
+      if (params.has('id')) {
+        id = params.get('id');
+      }
+      var apiLimit = false;
+      fetch(`/api/FlashCards/flashcard?id=${id}`) 
+        .then(response => {
+          if (!response.ok) {
+            apiLimit = true;
+            throw new Error(`HTTP error! Status: ${response.status}`);
+          }
+          return response.json();
+        })
+        .then(data => {
+          if (data && data.red) {
+            window.location.href = data.red;
+          } else if (data && data.err) {
+            alert(err);
+          } else {
+            var title = document.getElementById("title");
+            var discription = document.getElementById("dis");
+            var author = document.getElementById("auth");
+            try {
+              data = JSON.parse(data);
+              const Name = data.Name;
+              const total = data.Num;
+              const cards = data[Name];
+
+              title.innerText = Name;
+              discription.innerText = data.Description;
+              author.innerText = "by " + data.author;
+
+              for (var cardNumber in cards) {
+                try {
+                  var card = cards[cardNumber];
+                  var thing = {
+                    front: card.front,
+                    back: card.back
+                  };
+                  cardData.push(thing);
+                } catch (err) {
+                  console.error("ERROR: \n" + err);
+                }
+              }
+
+              updateCard();
+            } catch (err) {
+              console.log(err);
+              alert("ERROR parsing card data! : reload");
+            }
+          }
+        })
+        .catch(error => {
+          if (apiLimit) {
+            alert("You reached the max amount of api request this min!! (10)");
+            return;
+          }
+          if (tries > 3) {
+            alert(`Fetch error: ${error}`);
+          } else {
+            loadCardData(tries + 1);
+          }
+        });
+    }
+    
+    function shuffle(){
+      for(var i = 0; i < cardData.length; i++){
+        var randomInt = Math.floor(Math.random() * cardData.length);
+        var temp = cardData[i];
+        cardData[i] = cardData[randomInt];
+        cardData[randomInt] = temp;
+      }
+      updateCard();
+    }
+
+    const flashCard = document.querySelector('.flash-card .card');
+    const frontSide = flashCard.querySelector('.front');
+    const backSide = flashCard.querySelector('.back');
+    const counter = document.querySelector('.counter');
+    const leftArrow = document.querySelector('.arrow.left');
+    const rightArrow = document.querySelector('.arrow.right');
+
+    var cardFlip = false;
+    flashCard.addEventListener('click', () => {
+      flip();
+    });
+
+    function flip() {
+      if (!cardFlip) {
+        flashCard.style.transform = 'rotateY(180deg)';
+      } else {
+        flashCard.style.transform = 'rotateY(0deg)';
+      }
+      cardFlip = !cardFlip;
+    }
+
+    leftArrow.addEventListener('click', left);
+
+    rightArrow.addEventListener('click', right);
+
+    function left() {
+      if (currentCardIndex > 0) {
+        currentCardIndex--;
+        flipBack();
+        updateCard();
+      }
+    }
+
+    function flipBack() {
+      if (cardFlip) {
+        flashCard.style.transition = 'transform none';
+        flashCard.style.transform = 'rotateY(0deg)';
+        cardFlip = !cardFlip;
+        setTimeout(() => {
+          flashCard.style.transition = 'transform 0.3s'; // Re-enable transition
+        }, 10);
+      }
+    }
+
+    function right() {
+      if (currentCardIndex < cardData.length - 1) {
+        currentCardIndex++;
+        flipBack();
+        updateCard();
+      }
+    }
+
+    document.addEventListener("keydown", function (event) {
+      if (event.key === "ArrowRight") {
+        right();
+      } else if (event.key === "ArrowLeft") {
+        left();
+      } else if (event.key === " ") { //space
+        event.preventDefault();
+        flip();
+      }
+    });
+
+    function updateCard() {
+      const card = cardData[currentCardIndex];
+      frontSide.textContent = card.front;
+      backSide.textContent = card.back;
+      format(true);
+      format(false);
+
+      counter.textContent = `${currentCardIndex + 1} / ${cardData.length}`;
+      disable();
+    }
+
+    function format(front) {
+      const card = cardData[currentCardIndex];
+
+      var originalText;
+      var indentedText = '';
+
+      if (front === true) {
+        originalText = card.front;
+      } else {
+        originalText = card.back;
+      }
+
+      if (originalText.length > 50) {
+        if (front) {
+          frontSide.style.fontSize = ".7vw";
+        } else {
+          backSide.style.fontSize = ".7vw";
+        }
+        let currentLine = '';
+
+        for (let i = 0; i < originalText.length; i++) {
+          currentLine += originalText[i];
+
+          if (currentLine.length === 50 && currentLine.indexOf(' ') === -1) {
+            indentedText += currentLine + '\n';
+            currentLine = '';
+          }
+        }
+
+        indentedText += currentLine; // Append the remaining text
+
+      } else {
+        indentedText = originalText;
+        if (originalText.length > 20) {
+          if (front) {
+            frontSide.style.fontSize = "1.5vw";
+          } else {
+            backSide.style.fontSize = "1.5vw";
+          }
+        }
+        if (front) {
+          frontSide.style.fontSize = "1vw";
+        } else {
+          backSide.style.fontSize = "1vw";
+        }
+      }
+
+      if (front === true) {
+        frontSide.textContent = indentedText;
+      } else {
+        backSide.textContent = indentedText;
+      }
+    }
+
+    function disable() {
+      if (currentCardIndex == 0) {
+        leftArrow.setAttribute("disabled", "true");
+      } else {
+        leftArrow.removeAttribute("disabled");
+      }
+      if (currentCardIndex == cardData.length - 1) {
+        rightArrow.setAttribute("disabled", "true");
+      } else {
+        rightArrow.removeAttribute("disabled");
+      }
+    }
+
+    document.getElementById('copyButton').addEventListener('click', function () {
+      const urlToCopy = window.location.href;
+
+      const tempInput = document.createElement('input');
+      document.body.appendChild(tempInput);
+      tempInput.value = urlToCopy;
+      tempInput.select();
+      document.execCommand('copy');
+      document.body.removeChild(tempInput);
+    });
+  </script>
+</body>
+
+</html>

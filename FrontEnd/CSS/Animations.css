@@ -1,0 +1,5 @@
+@keyframes appear {
+    0%   {top:0px; opacity: 0%}
+    50%  {top: 175px; opacity: 75%}
+    100% {top:200px; opacity: 100%}
+  }

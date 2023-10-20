@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="icon" href="/api/images/favicon" type="image/x-icon">
+    <link rel="manifest" href="/manifest.json">
+    <title>QuizAcer.com</title>
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            font-family: Arial, sans-serif;
+            background-color: #102542;
+        }
+
+        .header-bar {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            background-color: #102542;
+            color: #F7EE7F;
+            padding: 1% 5%;
+            max-height: 100px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+        }
+
+        .header-button {
+            background-color: transparent;
+            border: none;
+            color: #F7EE7F;
+            cursor: pointer;
+            padding: 5px 10px;
+            font-size: medium;
+            transition: background-color 0.3s, color 0.3s;
+        }
+
+        .header-button:hover {
+            background-color: #555;
+        }
+
+        .search-bar {
+            flex-grow: 1;
+            padding: 5px;
+            border: none;
+            border-radius: 5px;
+            margin: 0 10px;
+            font-size: medium;
+        }
+
+        #Logo{
+            color: #F87060;
+            font-weight: bolder;
+            font-size: x-large;
+        }
+
+        .header-button:last-child {
+            font-size: x-large;
+            font-weight: bolder;
+        }
+        #plus {
+            font-size: x-large;
+            font-weight: bolder;
+        }
+
+    </style>
+</head>
+<body>
+    <header class="header-bar">
+        <button class="header-button" id = "Logo" onclick="redirect('quizacer')"><b>QuizAcer</b></button>
+        <button class="header-button" onclick="redirect('home')">Home</button>
+        <button class="header-button" onclick="redirect('home')">Flashcard Sets</button>
+        <button class="header-button" onclick="redirect('abc')">Resources</button>
+        <input id="search-bar" type="text" class="search-bar" placeholder="Search...">
+        <button id="plus" class="header-button" onclick="redirect('newcard')"><b>+</b></button>
+        <button class="header-button" onclick="redirect('settings')">⚙</button>
+    </header>
+</body>
+<script>
+    function redirect(url){
+        const endpoint = window.top.location.href;
+        var totalSlash = 0; 
+        var slashIndex = null;
+        for(var i = 0; i < endpoint.length; i++){
+            if(endpoint.charAt(i) == '/'){
+                totalSlash++; 
+                if(totalSlash => 3){
+                    slashIndex = i+1;
+                }
+            }
+        }  
+
+        var string = "";
+
+        for(var i = slashIndex; i < endpoint.length; i++){
+            string = string + endpoint.charAt(i); 
+        }
+
+        console.log(string);
+
+        if(string != url){
+            if((string == "home" && url == "quizacer") || (string == "quizacer" && url == "home")){} else {
+                window.top.location.href =  `/${url}`;
+            }
+        }
+    }
+
+    window.onload = function() {
+        const textbox = document.getElementById('search-bar');
+        textbox.addEventListener('keydown', function(event){
+            if (event.key !== 'Enter') {
+                return; 
+            }
+            const search = event.target.value;
+
+            if(search.length < 2){
+                alert("The search must be more the 3 characters!");
+                return; 
+            }
+
+            const illegalCharacters = /[^a-zA-Z0-9\s]/.test(search);
+
+            if (illegalCharacters) {
+                alert("Names can only contain a-Z and 0-9!");
+                return; 
+            }
+            window.top.location.href = `/search?s=${search}`;
+            //add so it doesn't reload
+        })
+    }
+</script>
+</html>

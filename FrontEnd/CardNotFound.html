@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link rel="icon" href="/api/images/favicon" type="image/x-icon">
+<link rel="manifest" href="/manifest.json">
+<script src="/api/js/serviceworkerinit.js"></script>
+<title>Card Not Found</title>
+<style>
+  body {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+    margin: 0;
+    font-family: Arial, sans-serif;
+  }
+  .message {
+    text-align: center;
+    margin-top: 1vh;
+    font-size: 24px;
+    color: #333;
+  }
+  .button {
+    margin-top: 5vh;
+    padding: 10px 20px;
+    background-color: #007bff;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    font-size: 16px;
+    cursor: pointer;
+    transition: background-color 0.3s;
+  }
+  .button:hover {
+    background-color: #0056b3;
+  }
+</style>
+</head>
+<body>
+  <div class="message">Card not found</div>
+  <button class="button" onclick="returnToHome()">Click here to return to home</button>
+  
+  <script>
+    function returnToHome() {
+      window.location.href = "/home";
+    }
+  </script>
+</body>
+</html>

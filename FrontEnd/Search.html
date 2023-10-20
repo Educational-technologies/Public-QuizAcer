@@ -1,0 +1,188 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="icon" href="/api/images/favicon" type="image/x-icon" />
+    <link rel="manifest" href="/manifest.json" />
+    <script src="/api/js/serviceworkerinit.js"></script>
+
+    <meta name="language" content="en" />
+    <meta
+      name="keywords"
+      content="flashcards, educational tools, interactive learning, study resources"
+    />
+    <meta
+      name="description"
+      content="Explore interactive flashcards for every subject on QuizAcer.com. Enhance your learning with our engaging educational flashcard sets!"
+    />
+
+    <meta property="og:title" content="QuizAcer.com/search" />
+    <meta
+      property="og:description"
+      content="Enhance your learning with interactive flashcards"
+    />
+    <meta property="og:image" content="/api/images/512x512.png" />
+    <meta property="og:url" content="https://QuizAcer.com/search" />
+
+    <title>QuizAcer | Search</title>
+
+    <style>
+      body {
+        margin: 0;
+        padding: 0;
+        font-family: Arial, sans-serif;
+        background-color: #102542;
+        max-height: none;
+        min-height: 100vh;
+      }
+
+      #box-container {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        max-height: none;
+      }
+
+      .box {
+        width: 65%;
+        border: 1px solid black;
+        padding: 20px;
+        margin: 10px;
+        height: 4.4vh;
+        background-color: #0a092d;
+        border-radius: 15px;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+      }
+
+      .box:hover {
+        box-shadow: 0px 0px 20px rgba(255, 255, 255, 0.5);
+        transform: scale(1.05);
+      }
+
+      .box-title {
+        font-size: 200%;
+        margin-bottom: 10px;
+        font-weight: bold;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        color: #F87060;
+      }
+
+      .box-description {
+        font-size: 100%;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        color: #F7EE7F;
+      }
+    </style>
+  </head>
+
+  <body>
+    <iframe src="/navbar" frameborder="0" scrolling="no" width="100%"></iframe>
+    <div
+      id="errorBox"
+      style="
+        text-align: center;
+        max-height: 5%;
+        font-size: xx-large;
+        color: red;
+        display: none;
+      "
+    ></div>
+    <div id="box-container"></div>
+  </body>
+
+  <script>
+    function search() {
+      const errorBox = document.getElementById("errorBox");
+      errorBox.style.color = "red";
+
+      const s = window.location.search;
+      const params = new URLSearchParams(s);
+
+      if (!params.has("search") && !params.has("s")) {
+        errorBox.textContent = "No search found!";
+        errorBox.style.display = "block";
+        return;
+      }
+
+      const Search = params.get("search") || params.get("s");
+
+      if (Search.length <= 2) {
+        errorBox.textContent = "Search length must be greater then two!";
+        errorBox.style.display = "block";
+        return;
+      }
+
+      fetch(`/api/FlashCards/search?s=${Search}`)
+        .then((response) => {
+          if (!response.ok) {
+            errorBox.textContent = "You are most likely rate limited. response -> "+response.status;
+            errorBox.style.display = "block";
+            throw new Error(`HTTP error! Status: ${response.status}`);
+          }
+          return response.json();
+        })
+        .then((data) => {
+          try {
+            if (!data) {
+              errorBox.textContent = "No data was sent!";
+              errorBox.style.display = "block";
+              return;
+            }
+            if (data.err) {
+              errorBox.textContent = data.message
+                ? data.message
+                : "There was an unknown error!";
+              errorBox.style.display = "block";
+              return;
+            }
+
+            if (data.nocards) {
+              errorBox.textContent = data.message
+                ? data.message
+                : "There are no cards that match that search!";
+              errorBox.style.display = "block";
+              errorBox.style.color = "#F7EE7F";
+              return;
+            }
+            
+            if(!data.cards){
+              errorBox.textContent = "No card data was sent! Try again.";
+              errorBox.style.display = "block";
+              return; 
+            }
+
+            data.cards.forEach((card) => {
+              console.log(card);
+              createBox(card.name, card.description, card.id);
+            });
+
+          } catch (err) {
+            console.log(err);
+          }
+        })
+        .catch((err) => {});
+    }
+
+    window.onload = function () {
+      search();
+    };
+
+    function createBox(title, description, id) {
+      const container = document.getElementById("box-container");
+      const redirectURL = `/flashcard?id=${id}`;
+
+      const boxHTML = `
+      <div class="box" onclick="window.location.href='${redirectURL}'">
+        <div class="box-title">${title}</div>
+        <div class="box-description">${description}</div>
+      </div>
+    `;
+      container.innerHTML += boxHTML;
+    }
+  </script>
+</html>

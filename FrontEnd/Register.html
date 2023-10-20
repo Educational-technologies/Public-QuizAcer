@@ -1,0 +1,454 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>QuizAcer - Login</title>
+    <link rel="stylesheet" type="text/css" href="/api/CSS/Animations">
+    <link rel="icon" href="/api/images/favicon" type="image/x-icon">
+
+    <meta name="language" content="en">
+    <meta name="keywords" content="flashcards, educational tools, interactive learning, study resources">
+    <meta name="description"
+        content="Explore interactive flashcards for every subject on QuizAcer.com. Enhance your learning with our engaging educational flashcard sets!">
+
+    <meta property="og:title" content="QuizAcer.com/login">
+    <meta property="og:description" content="Enhance your learning with interactive flashcards">
+    <meta property="og:image" content="/api/images/512x512.png">
+    <meta property="og:url" content="https://QuizAcer.com/">
+
+
+    <style>
+        @keyframes load-in {
+            0% {
+                opacity: 0;
+                transform: scale(0.9);
+            }
+
+            100% {
+                opacity: 1;
+                transform: scale(1);
+            }
+        }
+
+        .animated {
+            opacity: 1;
+            animation: load-in 0.6s forwards;
+        }
+
+        body {
+            background-image: url('/api/images/registration');
+            background-size: cover;
+            color: #E07A5F;
+            font-family: Arial, sans-serif;
+        }
+
+        .container {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            flex-direction: column;
+        }
+
+        .form {
+            background-color: #102542;
+            border: 8px solid black;
+            border-radius: 50px;
+            text-align: center;
+            max-width: 1200px;
+            width: 30%;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            opacity: 1;
+            animation: load-in 1.5s forwards;
+            overflow: hidden;
+        }
+
+        .form input[type="text"],
+        .form input[type="email"],
+        .form input[type="password"] {
+            width: 100%;
+            padding: 10px;
+            margin-bottom: 10px;
+            border-radius: 3px;
+            border: none;
+            opacity: 1;
+            box-sizing: border-box;
+            max-width: 100%;
+        }
+
+        .error {
+            width: 100%;
+            border-radius: 3px;
+            border: none;
+            opacity: 1;
+            color: red;
+        }
+
+        .form input[type="submit"],
+        .form input[type="button"] {
+            background-color: #F87060;
+            width: 100%;
+            padding: 10px;
+            margin-bottom: 10px;
+            border-radius: 3px;
+            border: none;
+            opacity: 1;
+            color: #F7EE7F;
+            cursor: pointer;
+            box-sizing: border-box;
+            max-width: 100%;
+        }
+
+        #name {
+            opacity: 100%;
+        }
+
+        .login {
+            text-align: center;
+            margin-top: 20px;
+        }
+
+        .login input[type="text"],
+        .login input[type="email"],
+        .login input[type="password"] {
+            width: 100%;
+            margin-bottom: 10px;
+            border-radius: 3px;
+            border: none;
+            opacity: 100%;
+        }
+
+        .login input [type="submit"] {
+            padding-top: 10px;
+            background-color: #F87060;
+            color: #F7EE7F;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 3px;
+            cursor: pointer;
+            opacity: 100%;
+            width: 100%;
+        }
+
+        h1 {
+            margin-bottom: 0px;
+            margin-top: 10px;
+            color: #F7EE7F;
+        }
+
+        .overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(255, 255, 255, 0.5);
+            color: #F87060;
+            display: none;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .popup {
+            background-color: #102542;
+            padding: 20px;
+            border-radius: 5px;
+            max-width: 1200px;
+        }
+    </style>
+    <script>
+        //bwetty is a really cool person
+        var one = false;
+        var two = false;
+        var three = false;
+        var four = false;
+        var five = false;
+
+        var timePassed = 0;
+        function isValidEmail(email) {
+            var re = /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
+            return re.test(email);
+        }
+
+        function VerifyEmail(event) {
+            event.preventDefault();
+            var password = document.getElementById("password").value;
+            var confirmPassword = document.getElementById("confirmPassword").value;
+
+            if (password !== confirmPassword) {
+                document.getElementById("errorField").innerHTML = "Passwords do not match";
+                return;
+            }
+
+            const checkbox = document.getElementById("terms&Conditions");
+            const checked = checkbox.checked;
+
+            if (!checked) {
+                document.getElementById("errorField").innerHTML = "You must agree to the terms and conditions";
+                return;
+            }
+
+            const email = document.getElementById("email").value
+            if (!isValidEmail(email)) {
+                document.getElementById("errorField").innerHTML = "Invalid email!";
+                return;
+            }
+
+            const data = {
+                username: document.getElementById("username").value,
+                email: email
+            };
+
+            const formattedData = JSON.stringify(data);
+            fetch('/VerifyEmail', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: formattedData
+            })
+                .then(response => {
+                    return response.json();
+                })
+                .then(data => {
+                    if (data.success) {
+                        openVerify();
+                        return;
+                    }
+                    if (data.URL) {
+                        window.location.replace(data.URL);
+                    } else {
+                        document.getElementById("errorField").innerHTML = data.message;
+                    }
+                })
+                .catch(error => {
+                    console.error(error);
+                });
+
+        }
+
+        function openVerify() {
+            var popup = document.getElementById("popup");
+            popup.style.display = "flex";
+        }
+
+        function closeVerify() {
+            var popup = document.getElementById("popup");
+            popup.style.display = "none";
+        }
+
+        function CreateAccount(event) {
+            event.preventDefault();
+            var password = document.getElementById("password").value;
+            var confirmPassword = document.getElementById("confirmPassword").value;
+
+            if (password !== confirmPassword) {
+                document.getElementById("errorField2").innerHTML = "Passwords do not match";
+                return;
+            }
+
+            const checkbox = document.getElementById("terms&Conditions");
+            const checked = checkbox.checked;
+
+            if (!checked) {
+                document.getElementById("errorField2").innerHTML = "You must agree to the terms and conditions";
+                return;
+            }
+
+            const email = document.getElementById("email").value
+            if (!isValidEmail(email)) {
+                document.getElementById("errorField2").innerHTML = "Invalid email!";
+                return;
+            }
+
+            const code = document.getElementById("verification").value;
+            if(code.length != 8){
+                document.getElementById("errorField2").innerHTML = "Invalid Code!";
+                return;
+            }
+
+            const data = {
+                username: document.getElementById("username").value,
+                email: email,
+                password: password,
+                code: code
+            };
+
+            const formattedData = JSON.stringify(data);
+            if (timePassed <= new Date().getTime() - 250) {
+                timePassed = new Date().getTime();
+                fetch('/CreateAccount', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: formattedData
+                })
+                    .then(response => {
+                        return response.json();
+                    })
+                    .then(data => {
+                        if (data.URL) {
+                            window.location.replace(data.URL);
+                        } else {
+                            document.getElementById("errorField2").innerHTML = data.message;
+                        }
+                    })
+                    .catch(error => {
+                        console.error(error);
+                    });
+            } else {
+                var timeleft = new Date().getTime() - timePassed;
+                document.getElementById("errorField2").innerHTML = "On submit cooldown! - try again in " + timeleft + "ms";
+            }
+        }
+
+        function customAnimate(thing) {
+            if ((thing === "usernameField" && !one) || (thing === "emailField" && !two) || (thing === "passwordField" && !three) ||
+                (thing === "confirmPasswordField" && !four) || (thing === "submitButton" && !five)) {
+                if (thing === "usernameField") { one = true; }
+                if (thing === "emailField") { two = true; }
+                if (thing === "passwordField") { three = true; }
+                if (thing === "confirmPasswordField") { four = true; }
+                if (thing === "submitButton") { five = true; }
+                const element = document.querySelector(`#${thing}`);
+                element.style.display = 'block';
+                element.classList.add('animated');
+            }
+        }
+
+        function handleSignUp(event) {
+            event.preventDefault();
+            document.title = "QuizAcer - Register";
+            document.getElementById('loginfm').reset();
+            document.getElementById("lg").style.display = "none";
+            document.getElementById("signup").style.display = "flex";
+            document.getElementById('errorField1').innerText = "";
+        }
+
+        function handleLogin(event) {
+            event.preventDefault();
+            document.title = "QuizAcer - Login";
+            document.getElementById('signupfrm').reset();
+            document.getElementById('signup').style.display = "none";
+            document.getElementById("lg").style.display = "flex";
+            document.getElementById('errorField').innerText = "";
+        }
+
+        var timePasseds = 0;
+        function login(event) {
+            event.preventDefault();
+            var password = document.getElementById("LGpassword").value;
+
+            const data = {
+                username: document.getElementById("LGusername").value,
+                password: password
+            };
+
+            const formattedData = JSON.stringify(data);
+            if (timePasseds <= new Date().getTime() - 250) {
+                timePasseds = new Date().getTime();
+                fetch('/Log-in', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: formattedData
+                })
+                    .then(response => {
+                        return response.json();
+                    })
+                    .then(data => {
+                        if (data.URL) {
+                            window.location.replace(data.URL);
+                        } else {
+                            document.getElementById("errorField1").innerHTML = data.message;
+                        }
+                    })
+                    .catch(error => {
+                        console.error(error);
+                    });
+            } else {
+                var timeleft = new Date().getTime() - timePasseds;
+                document.getElementById("errorField1").innerHTML = "On submit cooldown! - try again in " + timeleft + "ms";
+            }
+        }
+    </script>
+</head>
+
+<body id="body">
+    <div class="container">
+        <div class="form" id="lg">
+            <h1>Welcome to QuizAcer!</h1>
+            <h2>Login to Account</h2>
+            <div class="error">
+                <h3 id="errorField1"></h3>
+            </div>
+            <form class="login" id="loginfm">
+                <div id="loginusernameField">
+                    <input type="text" id="LGusername" placeholder="Username" autocomplete="username" required>
+                </div>
+                <div id="loginpasswordField">
+                    <input type="password" id="LGpassword" placeholder="Password" autocomplete="current-password"
+                        required>
+                </div>
+
+                <input type="submit" id="submitButton1" value="Login" onclick="login(event)">
+                <h3>or</h3>
+                <input type="submit" id="submitButton2" value="Sign Up" onclick="handleSignUp(event)">
+            </form>
+        </div>
+        <div class="form" id="signup" style="display: none;">
+            <h1>Welcome to QuizAcer!</h1>
+            <h2>Create a new Account</h2>
+            <div class="error">
+                <h3 id="errorField"></h3>
+            </div>
+            <form id="signupfrm" onsubmit="VerifyEmail(event)">
+                <div id="usernameField">
+                    <input type="text" id="username" placeholder="Username" oninput="customAnimate('emailField')"
+                        required>
+                </div>
+                <div id="emailField" style="display: none;">
+                    <input type="email" id="email" placeholder="Email" autocomplete="email"
+                        oninput="customAnimate('passwordField')" required>
+                </div>
+                <div id="passwordField" style="display: none;">
+                    <input type="password" id="password" placeholder="Password" autocomplete="on"
+                        oninput="customAnimate('confirmPasswordField')" required>
+                </div>
+                <div id="confirmPasswordField" style="display: none;">
+                    <input type="password" id="confirmPassword" placeholder="Confirm Password"
+                        oninput="customAnimate('submitButton')" required>
+                </div>
+                <br>
+                <div class="Terms">
+                    <div id="TermsText"><input type="checkbox" id="terms&Conditions"> I agree to the <a href="/terms"
+                            target="_blank">Terms & Conditions</a><br>And am 13 years or older or<br>have the consent of
+                        a parent/guardian</div>
+                </div>
+                <br>
+                <input type="submit" id="submitButton" value="Sign Up">
+                <h3>or</h3>
+                <input type="submit" id="submitButton4" value="Login in" onclick="handleLogin(event)">
+            </form>
+        </div>
+    </div>
+    <div id="popup" class="overlay">
+        <div class="popup" id="1">
+            <div class="error">
+                <h1 id="errorField2"></h1>
+            </div>
+            <h2 id="Title">Email verification (8 digit code)</h2>
+            <h3 id="Title">You have 5mins to get the code & 5 tries</h3>
+            <h3 id="Title">Check your spam folder for the email!</h3>
+            <input type="number" placeholder="Your verification code" id="verification" required>
+            <input type="submit" id="verifyEmail" value="Verify" onclick="CreateAccount(event)">
+        </div>
+    </div>
+</body>
+
+</html>

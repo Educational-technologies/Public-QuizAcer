@@ -1,0 +1,199 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="icon" href="/api/images/favicon" type="image/x-icon">
+  <link rel="manifest" href="/manifest.json">
+  <script src="/api/js/serviceworkerinit.js"></script>
+
+  <meta name="language" content="en">
+  <meta name="keywords" content="flashcards, educational tools, interactive learning, study resources">
+  <meta name="description" content="Explore interactive flashcards for every subject on QuizAcer.com. Enhance your learning with our engaging educational flashcard sets!">
+
+  <meta property="og:title" content="QuizAcer.com/Home">
+  <meta property="og:description" content="Enhance your learning with interactive flashcards">
+  <meta property="og:image" content="/api/images/512x512.png">
+  <meta property="og:url" content="https://QuizAcer.com/home">
+  
+  <title>Home | QuizAcer</title>
+  <style>
+    body {
+      min-height: 100vh;
+      margin: 0;
+      padding: 0;
+      font-family: Arial, sans-serif;
+      background-color: #102542;
+    }
+
+    .container {
+      width: 100%;
+      padding: 0 15%;
+      box-sizing: border-box;
+      background-color: #102542;
+      min-height: 100vh;
+      flex-direction: column;
+      justify-content: flex-start;
+      align-items: flex-start;
+    }
+
+    .header {
+      font-size: 36px;
+      margin-bottom: 20px;
+      color: #F7EE7F;
+    }
+
+    .content {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: flex-start;
+      align-items: flex-start;
+      background-color: #c7d6e9;
+      width: 100%;
+      padding: 20px;
+      box-sizing: border-box;
+      box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
+    }
+
+    .flashinfo {
+      width: calc(28%);
+      margin: .5% auto 2%;
+      padding: .9%;
+      height: 10vh;
+      background-color: #f0f0f0;
+      border-radius: 18px;
+      box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
+      transition: box-shadow 0.3s, transform 0.3s;
+    }
+
+    .flashinfo:hover {
+      box-shadow: 0px 0px 20px rgba(255, 255, 255, 0.5);
+      transform: scale(1.05);
+    }
+
+    .title {
+      font-size: 2vh;
+      margin-bottom: 10px;
+      word-wrap: break-word;
+    }
+
+    .description {
+      font-size: small;
+      font-size: 1em;
+      color: #666;
+      word-wrap: break-word;
+      overflow: hidden;
+      white-space: nowrap;
+      text-overflow: ellipsis;
+    }
+  </style>
+</head>
+
+<body onload="loadSets()">
+  <iframe src="/navbar" frameborder="0" scrolling="no" width="100%"></iframe>
+  <div class="container">
+    <div class="header">Your sets:</div>
+    <div class="content" id="CardsContainer">
+      <div class="flashinfo" id="noCards" style="display: none;" onclick="window.location.href='newcard'">
+        <div class="title">You have no cards</div>
+        <div class="description">Click to create a new card!</div>
+      </div>
+      <div class="flashinfo" id="Clone" style="display: none;">
+        <div class="title"></div>
+        <div class="description"></div>
+      </div>
+    </div>
+  </div>
+</body>
+<script>
+  const nocards = document.getElementById("noCards");
+  function loadSets() {
+    fetch("/api/FlashCards/loadCards", {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json'
+      }
+    }).then(response => {
+      return response.json();
+    }).then(stuff => { // will process the response from the server
+      if (stuff.err) {
+        alert(stuff.message);
+      } else {
+        if (stuff.cards) {
+          const cards = JSON.parse(stuff.cards);
+          for (var i = 0; i < cards.length; i++) {
+            generateCards(cards[i]);
+          }
+          if(cards.length == 0){
+            nocards.style.display = "block";
+          }
+        }
+      }
+    }).catch(error => {
+      console.error(error);
+    });
+  }
+  var cardNum = 0;
+  var mouseIn = false;
+  function generateCards(data) {
+    cardNum++;
+    const container = document.getElementById("CardsContainer");
+
+    const card = document.createElement("div");
+    card.className = "flashinfo";
+
+    const button = document.createElement("button");
+    button.innerText="✏️";
+    button.style.fontSize = "2vh";
+    
+    button.addEventListener("mouseenter", () => {
+      mouseIn = true;
+    });
+
+    button.addEventListener("mouseleave", () => {
+      mouseIn = false;
+    });
+
+    const title = document.createElement("div");
+    title.className = "title";
+    title.textContent = data.Name + "  ";
+    title.appendChild(button);
+
+    const description = document.createElement("div");
+    description.className = "description";
+    description.textContent = data.Description;
+
+    card.appendChild(title);
+    card.appendChild(description);
+
+    card.addEventListener("click", () => handleCardClick(data.ID));
+
+    container.appendChild(card);
+  }
+  const audio = new Audio("/api/sound/buttonhover");
+  /*
+    Sound source: https://freesound.org/s/338229/
+    Created by: Fachii
+  */
+  function playSound() {
+    if(audio){
+      audio.play();
+    } else {
+      console.log("f");
+    }
+  }
+
+  function handleEditClick(id){
+    window.location.href = `/edit?id=${id}`;
+  }
+  function handleCardClick(id) {
+    if(mouseIn){
+      handleEditClick(id);
+      return;
+    }
+    window.location.href = `/flashcard?id=${id}`;
+  }
+</script>
+
+</html>

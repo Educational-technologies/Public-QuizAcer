@@ -1,0 +1,849 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <title>Flashcard Creator</title>
+  <link rel="icon" href="/api/images/favicon" type="image/x-icon">
+
+  <meta name="language" content="en">
+  <meta name="keywords" content="flashcards, educational tools, interactive learning, study resources">
+  <meta name="description"
+    content="Explore interactive flashcards for every subject on QuizAcer.com. Enhance your learning with our engaging educational flashcard sets!">
+
+  <meta property="og:title" content="QuizAcer.com/login">
+  <meta property="og:description" content="Enhance your learning with interactive flashcards">
+  <meta property="og:image" content="/api/images/512x512.png">
+  <meta property="og:url" content="https://QuizAcer.com/">
+  <style>
+    body {
+      margin: 0;
+      padding: 0;
+      background-color: #102542;
+    }
+
+    .header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 10px;
+      background-color: #102542;
+    }
+
+    #CNFCS {
+      color: #F7EE7F;
+      position: relative;
+      left: 15%;
+    }
+
+    #SaveandPub {
+      position: relative;
+      right: 15%;
+    }
+
+    .flashcard-set {
+      margin-top: 1%;
+      padding-right: 15%;
+      padding-left: 15%;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+
+    .name-box {
+      border-radius: 10px;
+      width: 100%;
+      border: 1px solid #ccc;
+      padding: 15px;
+      background-color: #747C92;
+      height: 10%;
+      max-height: 100px;
+    }
+
+    .name-box:focus {
+      border-color: #F7EE7F;
+    }
+
+    .input-field {
+      position: relative;
+    }
+
+    #name {
+      border: none;
+      color: white;
+      font-size: 16px;
+      resize: none;
+      width: 100%;
+      box-sizing: border-box;
+      outline: none;
+      overflow: hidden;
+      height: 100%;
+      font-size: large;
+    }
+
+    .flashcard-container {
+      margin-bottom: 20px;
+      padding: 10px;
+      border-radius: 20px;
+      width: 100%;
+      background-color: #747C92;
+    }
+
+    .flashcard-container h3 {
+      text-align: left;
+    }
+
+    .flashcard-container .input-field {
+      margin-bottom: 10px;
+    }
+
+    textarea {
+      border: none;
+      resize: none;
+      overflow: hidden;
+      outline: none;
+      padding: 0;
+      margin: 0;
+      font-family: inherit;
+      font-size: inherit;
+      line-height: inherit;
+      background-color: #747C92;
+      height: 1em;
+    }
+
+    textarea {
+      min-height: 1em;
+      width: 100%;
+      white-space: pre-wrap;
+      border-bottom: 2px solid white;
+    }
+
+    textarea:focus {
+      border-color: #F7EE7F;
+    }
+
+    .flashcard-container textarea {
+      width: 100%;
+      max-width: 100%;
+    }
+
+    .buttons-container button {
+      background-color: #F87060;
+      color: #F7EE7F;
+      margin-right: 10px;
+    }
+
+    .input-card {
+      display: flex;
+      justify-content: space-between;
+    }
+
+    .TextArea {
+      flex: 1;
+      margin-right: 5px;
+    }
+
+    #front {
+      flex: 1;
+    }
+
+    #back {
+      flex: 1;
+    }
+
+    /* Add this CSS to style the text "Front" and "Back" */
+    .input-card .label {
+      font-weight: bold;
+      color: white;
+      margin-bottom: 5px;
+    }
+
+    #addFlashcard {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 10px;
+      background-color: #f0f0f0;
+    }
+
+    /* New styles for the tags and description */
+    .flashcard-create {
+      display: flex;
+      width: 105%;
+      justify-content: space-between;
+      margin-bottom: 3%;
+    }
+
+    .tags-box {
+      flex: 2;
+      margin-right: 5%;
+      width: 100%;
+      margin-top: 1.5%;
+    }
+
+    .description-box {
+      margin-top: 1.5%;
+      flex: 3;
+      width: 100%;
+    }
+
+    #Descriptionss {
+      padding: 15px;
+      min-height: 7em;
+      border-radius: 15px;
+      box-sizing: content-box;
+      font-size: x-large
+    }
+
+    .tags-box select {
+      width: 115%;
+    }
+
+    /* Additional styles for the tags box and tag list */
+    .tags-box {
+      padding: 15px;
+      width: 115%;
+      background-color: #102542;
+      border-radius: 15px;
+    }
+
+    .tags-list {
+      display: none;
+      position: absolute;
+      border: 1px solid #ccc;
+      border-radius: 5px;
+      max-height: 100px;
+      overflow-y: auto;
+      width: 100%;
+    }
+
+    .tag {
+      cursor: pointer;
+
+    }
+
+    .tag:hover {
+      background-color: #ddd;
+    }
+
+    textarea::placeholder {
+      color: rgb(255, 255, 255);
+      /* Replace 'blue' with your desired color */
+      opacity: 0.8;
+    }
+
+    #saveButton,
+    #publishButton {
+      width: 135px;
+      height: 35px;
+      font-size: large;
+      background-color: #F87060;
+      color: #ffffff;
+    }
+
+    #addFlashcard {
+      background-color: #F87060;
+      color: #ffffff;
+    }
+
+    h3 {
+      color: white;
+    }
+
+    .overlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background-color: rgba(255, 255, 255, 0.5);
+      display: none;
+      justify-content: center;
+      align-items: center;
+    }
+
+    .popup {
+      background-color: #102542;
+      padding: 20px;
+      border-radius: 5px;
+    }
+
+    .close {
+      position: absolute;
+      top: 10px;
+      right: 10px;
+      cursor: pointer;
+    }
+
+    textarea {
+      resize: none;
+      min-height: 1em;
+      word-break: break-word;
+    }
+
+    #autoGenerate {
+      color: #F87060;
+    }
+
+    .buttonOptions {
+      background-color: #F7EE7F;
+      align-content: center;
+      height: 5%;
+      width: max-content;
+      padding: 1%;
+      font-size: .7vw;
+      margin-bottom: 1%;
+    }
+
+    .trash {
+      margin-left: 90%;
+    }
+  </style>
+</head>
+
+<body onload="onLoad()">
+  <iframe src="/navbar" frameborder="0" scrolling="no" width="100%"></iframe>
+  <div class="header">
+    <h1 id="CNFCS">New Flashcard Set</h1>
+    <div id="SaveandPub">
+      <h3 id="Success"></h3>
+      <button id="saveButton">Save as Draft</button>
+      <button id="publishButton">Publish</button>
+    </div>
+  </div>
+
+  <div class="flashcard-set">
+    <div class="name-box">
+      <div class="input-field">
+        <textarea id="name" rows="1" maxlength="50" placeholder="Put the name of your flashcard set here!"></textarea>
+      </div>
+    </div>
+    <div class="flashcard-create">
+      <div class="description-box">
+        <div class="input-field">
+          <textarea class="TextArea" id="Descriptionss" rows="1" maxlength="1000" placeholder="Description"></textarea>
+        </div>
+      </div>
+      <!--
+        <div class="tags-box" id="tagsBox" onclick="toggleTagsList()">
+        <div class="input-field">
+          <div id="tagsBoxContent">Click to add tags</div>
+          <div id="tagsList" class="tags-list">
+            <div class="tag" onclick="addTag('AP euro')">AP euro</div>
+            <div class="tag" onclick="addTag('Tag 2')">Tag 2</div>
+            <div class="tag" onclick="addTag('Tag 3')">Tag 3</div>
+          </div>
+        </div>
+      </div>
+      -->
+    </div>
+
+    <button class="buttonOptions" onclick="openPopup(`autoGenerate`, `userTEXT`)">Words to definitions</button>
+
+    <button id="addFlashcard">Add Flashcard</button>
+  </div>
+
+  <div id="autoGenerate" class="overlay">
+    <div class="popup" id="1">
+      <span class="close">&times;</span>
+      <div id="ChangeUserERRORField"></div>
+      <h2 id="popUpTitle">Auto generate words to definitions</h2>
+      <textarea id="userTEXT" placeholder="Copy the text into this box"></textarea>
+
+      <textarea maxlength="2" id="seprated" placeholder="Enter here what each word is seprated by"></textarea>
+      <button class="confirm" id="off" onclick="closePopup(`autoGenerate`)">Cancle</button><button class="confirm"
+        id="on" onclick="generate()">Generate</button>
+    </div>
+  </div>
+
+
+
+  <script>
+    var numCards = 0;
+    var ID;
+    var textEdited;
+  async function redirect(url) {
+    await new Promise(resolve => setTimeout(resolve, 2000));
+    window.location.href = url;
+  }
+
+  function onLoad(tries) {
+    const endpoint = window.location.pathname.toLowerCase();
+    if (endpoint.includes("/edit")) {
+    } else if (endpoint.includes('/newcard')) {
+      addNewFlashcard();
+      return;
+    } else {
+      window.location.href = "/home";
+      return;
+    }
+    currentCardIndex = 0;
+    const search = window.location.search;
+    const params = new URLSearchParams(search);
+    var id;
+    if (params.has('id')) {
+      id = params.get('id');
+    }
+    var apiLimit = false;
+    fetch(`/api/FlashCards/editcard?id=${id}`)
+      .then(response => {
+        if (!response.ok) {
+          apiLimit = true;
+          throw new Error(`HTTP error! Status: ${response.status}`);
+        }
+        return response.json();
+      })
+      .then(data => {
+        if (!data) {
+          alert("Data is missing :O");
+          return;
+        }
+        if (data.err) {
+          alert(data.err);
+          if (data.red) {
+            redirect(data.red);
+          }
+          return;
+        }
+        if (data.red) {
+          window.location.href = data.red;
+          return;
+        }
+        var title = document.getElementById("name");
+        var discription = document.getElementById("Descriptionss");
+        try {
+          data = JSON.parse(data);
+          const Name = data.Name;
+          const total = data.Num;
+          const cards = data[Name];
+          ID = data.ID;
+
+          title.value = Name;
+          discription.value = data.Description;
+          for (var key in cards) {
+            if (cards.hasOwnProperty(key)) {
+              var value = cards[key];
+              try {
+                if (numCards > 100) {
+                  return;
+                }
+                const things = addNewFlashcard(true);
+
+                things[0].innerText = value.front;
+                things[1].innerText = value.back;
+              } catch (err) {
+                console.error(err);
+                alert("You may want to reload: card doesn't exsits");
+              }
+            }
+          }
+        } catch (err) {
+          console.log(err);
+          alert("ERROR parsing card data! : reload");
+        }
+      }).catch(error => {
+        if (apiLimit) {
+          alert("You reached the max amount of api request this min!! (10)");
+          return;
+        }
+        if (tries > 3) {
+          alert(`Fetch error: ${error}`);
+        } else {
+          onLoad(tries + 1);
+        }
+      });
+  }
+
+    function generate() {
+      var succ = document.getElementById("Success");
+      succ.style.display = "none";
+      const split = document.getElementById("seprated").value || " ";
+      const wordsList = (document.getElementById("userTEXT").value).split(split);
+      for (var i = 0; i < wordsList.length; i++) {
+        if(numCards < 100){
+        const word = wordsList[i];
+        try {
+          fetch(`https://api.dictionaryapi.dev/api/v2/entries/en/${word}`)
+            .then(response => {
+              if (!response.ok) {
+                throw new Error('Network response was not ok');
+              }
+              return response.json();
+            })
+            .then(data => {
+              if (!data.message) {
+                var definition = data[0].meanings[0].definitions[0].definition;
+                const things = addNewFlashcard(true);
+
+                things[0].innerText = word;
+                things[1].innerText = definition;
+              }
+            })
+            .catch(error => {
+              console.error('There was a problem with the fetch operation:', error);
+            });
+        } catch (err) {
+          console.log(err);
+        }
+      }
+      }
+      saveData();
+      closePopup("autoGenerate");
+    }
+
+    function openPopup(id, clearID) {
+      if(clearID){document.getElementById(clearID).value = "";}
+      var popup = document.getElementById(id);
+      popup.style.display = "flex";
+    }
+
+    function closePopup(id) {
+      var popup = document.getElementById(id);
+      popup.style.display = "none";
+    }
+
+    function deleteCard(cardID) {
+      var card = document.getElementById(cardID);
+      card.remove();
+
+      if (numCards == 100) {
+        var button = document.getElementById("addFlashcard");
+        button.style.display = "flex";
+      }
+
+      numCards--;
+
+      const elements = document.getElementsByClassName("flashcard-container");
+
+      const elementsArray = Array.from(elements);
+      var c = 1;
+      for (let i = 0; i < elementsArray.length; i++) {
+        const element = elementsArray[i];
+        var num = i + 1;
+        element.id = `FC${num}`;
+        const h3Element = element.querySelector("h3");
+        var deleteButton = document.createElement("button");
+        deleteButton.className = "trash";
+        deleteButton.innerText = "🗑️";
+        var thing = `FC${num}`;
+        (function () {
+          var thing = `FC${num}`;
+          deleteButton.addEventListener("click", function () {
+            deleteCard(thing);
+          });
+        })();
+
+        if (h3Element) {
+          h3Element.textContent = "Flashcard " + num;
+          h3Element.appendChild(deleteButton);
+        }
+      }
+    }
+    // Add event listeners or additional JavaScript logic here
+    document.getElementById("addFlashcard").addEventListener("click", function () {
+      addNewFlashcard();
+    });
+
+    document.getElementById("saveButton").addEventListener("click", function () {
+      saveFlashcardSet();
+    });
+
+    document.getElementById("publishButton").addEventListener("click", function () {
+      publishFlashcardSet();
+    });
+
+    function addNewFlashcard(generating) {
+      if (numCards > 99) {
+        var button = document.getElementById("addFlashcard");
+        button.style.display = "none";
+        if (!generating) {
+          alert("You reach the max amount of cards per set. (100)");
+          return;
+        }
+
+      } else {
+        var deleteButton = document.createElement("button");
+        deleteButton.className = "trash";
+        deleteButton.innerText = "🗑️";
+
+        deleteButton.addEventListener("click", function () {
+          deleteCard("FC" + (numCards));
+        });
+
+
+        var flashcardContainer = document.createElement("div");
+        flashcardContainer.className = "flashcard-container";
+        flashcardContainer.id = "FC" + (numCards + 1);
+
+        var flashcardHeading = document.createElement("h3");
+        flashcardHeading.innerHTML = "Flashcard " + (numCards + 1);
+        flashcardHeading.appendChild(deleteButton);
+
+        var inputfield = document.createElement("div");
+        inputfield.className = "input-card";
+
+        var frontTextarea = document.createElement("div");
+        frontTextarea.className = "TextArea";
+        var frontLabel = document.createElement("div");
+        frontLabel.textContent = "Front";
+        frontLabel.className = "label";
+        var frontTextArea = document.createElement("textarea");
+        frontTextArea.id = "front";
+        frontTextArea.rows = 1;
+        frontTextArea.maxLength = 1000;
+        frontTextArea.placeholder = "Front of Flashcard";
+        frontTextarea.appendChild(frontTextArea);
+        frontTextarea.appendChild(frontLabel);
+        inputfield.appendChild(frontTextarea);
+
+        var backTextarea = document.createElement("div");
+        backTextarea.className = "TextArea";
+        var backLabel = document.createElement("div");
+        backLabel.textContent = "Back";
+        backLabel.className = "label";
+        var backTextArea = document.createElement("textarea");
+        backTextArea.id = "back";
+        backTextArea.rows = 1;
+        backTextArea.maxLength = 1000;
+        backTextArea.placeholder = "Back of Flashcard";
+        backTextarea.appendChild(backTextArea);
+        backTextarea.appendChild(backLabel);
+        inputfield.appendChild(backTextarea);
+
+        backTextArea.addEventListener('input', () => adjustTextareaHeight(backTextArea));
+        frontTextArea.addEventListener('input', () => adjustTextareaHeight(frontTextArea));
+
+        flashcardContainer.appendChild(flashcardHeading);
+        flashcardContainer.appendChild(inputfield);
+
+        var button = document.getElementById("addFlashcard");
+
+        var button = document.getElementById("addFlashcard");
+        button.parentNode.insertBefore(flashcardContainer, button);
+
+        frontTextArea.addEventListener('keydown', handleTextareaKeydown);
+        frontTextArea.addEventListener('input', handleTextareaInput);
+
+        // Add initial content of the new textarea to the map
+        initialTextareaContentMap.set(frontTextArea, frontTextArea.value);
+
+        backTextarea.addEventListener('keydown', handleTextareaKeydown);
+        backTextarea.addEventListener('input', handleTextareaInput);
+
+        // Add initial content of the new textarea to the map
+        initialTextareaContentMap.set(backTextarea, backTextarea.value);
+
+        numCards++;
+
+        if (generating) {
+          return ([frontTextArea, backTextArea]);
+        }
+      }
+    }
+
+    function containsIllegalCharacters(name) {
+      return /[^a-zA-Z0-9\s]/.test(name);
+    }
+
+    var time = 0;
+
+    function autoSave() {
+      if (time < new Date().getTime() - 10000 && textEdited && textEdited === true) {
+        saveData(false, false);
+        time = new Date().getTime();
+        textEdited = false;
+      }
+    }
+
+    function saveFlashcardSet() {
+      if (!textEdited) {
+        return;
+      }
+      saveData(false, true);
+    }
+
+    function publishFlashcardSet() {
+      if (!textEdited) {
+        return;
+      }
+      // make it so that the id to user doesn't get published until later or something idms o\
+      alert("Flashcard set published!");
+    }
+
+    function adjustTextareaHeight(textarea) {
+      textarea.style.height = 'auto';
+      textarea.style.height = `${textarea.scrollHeight}px`;
+    }
+
+    function setupExpandingTextareas() {
+      const textareas = document.querySelectorAll('.TextArea textarea');
+      textareas.forEach((textarea) => {
+        adjustTextareaHeight(textarea); // Adjust height initially
+        textarea.addEventListener('input', () => adjustTextareaHeight(textarea)); // Adjust height dynamically
+      });
+      setInterval(autoSave, 15000);
+    }
+
+    function toggleTagsList() {
+      var tagsList = document.getElementById("tagsList");
+      if (tagsList.style.display === "none") {
+        tagsList.style.display = "block";
+      } else {
+        tagsList.style.display = "none";
+      }
+    }
+
+    function addTag(tag) {
+      var tagsBoxContent = document.getElementById("tagsBoxContent");
+      var tagsList = document.getElementById("tagsList");
+      var tags = tagsBoxContent.textContent.split(',').map(item => item.trim());
+      if (tags.includes(tag)) {
+        // Remove the tag if it already exists
+        tags = tags.filter(item => item !== tag);
+      } else {
+        // Add the tag if it doesn't exist
+        if (tags.length < 5) {
+          tags.push(tag);
+        } else {
+          alert("You can add a maximum of 5 tags.");
+          return;
+        }
+      }
+      tagsBoxContent.textContent = tags.join(', ');
+      tagsList.style.display = "none";
+    }
+
+    function getData() {
+      var name = document.getElementById("name").value;
+      var FlashCard = {}; // Initialize FlashCard as an object
+
+      var json = {
+        Name: name,
+        Description: document.getElementById("Descriptionss").value,
+        [name]: FlashCard, // Assign the FlashCard object to the [name] property
+        ID: ID || "",
+        Num: numCards
+      };
+
+      for (var i = 1; i <= numCards; i++) {
+        var parentElement = document.getElementById("FC" + i);
+        var frontTextArea = parentElement.querySelector("#front");
+        var backTextArea = parentElement.querySelector("#back");
+
+        var frontData = frontTextArea.value;
+        var backData = backTextArea.value;
+
+        var flashcardObj = {
+          front: frontData,
+          back: backData
+        };
+
+        // Add the flashcard object to the FlashCard object with numbered keys
+        var i2s = i.toString();
+        FlashCard[i2s] = flashcardObj;
+      }
+      json[name] = FlashCard;
+      return (json);
+    }
+    var timePassed = 0;
+    function saveData(publish, notify) { // publish will be used later for stuff but not rn :P 
+      var name = document.getElementById("name").value;
+      var data = getData();
+      if (name == "") {
+        alert("Please name the card");
+        return;
+      }
+      if(name.length >= 51){
+        alert("Name is too long!");
+        return; 
+      }
+      if (containsIllegalCharacters(name)) {
+        alert("Only use 0-9, A-Z and spaces in the name");
+        return;
+      }
+      data = {
+        FlashCard: data,
+        name: name
+      };
+      data = JSON.stringify(data);
+      if (timePassed <= new Date().getTime() - 1000) {
+        timePassed = new Date().getTime();
+        fetch("/api/FlashCards/save", {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json'
+          },
+          body: data
+        }).then(response => {
+          return response.json();
+        }).then(stuff => { // will process the response from the server
+          if (stuff.alert) {
+            alert(stuff.alert);
+            return;
+          }
+          if (stuff.err) {
+            if (notify) {
+              alert(stuff.message);
+            }
+            if (stuff.message != "Data missing!") {
+              alert(stuff.message);
+            }
+          } else {
+            if (stuff.ID) {
+              ID = stuff.ID;
+            }
+            if (stuff.message) {
+              textEdited = false;
+              var succ = document.getElementById("Success");
+              succ.style.display = "flex";
+              succ.innerHTML = stuff.message;
+            }
+          }
+        }).catch(error => {
+          console.error(error);
+        });
+
+      }
+    }
+
+    const textareas = document.querySelectorAll('textarea');
+
+    // Create a map to store the initial content of each textarea
+    const initialTextareaContentMap = new Map();
+
+    // Add initial content of each textarea to the map
+    textareas.forEach((textarea) => {
+      initialTextareaContentMap.set(textarea, textarea.value);
+    });
+
+    // Add event listeners to track changes
+    textareas.forEach((textarea) => {
+      textarea.addEventListener('keydown', handleTextareaKeydown);
+      textarea.addEventListener('input', handleTextareaInput);
+    });
+
+    function handleTextareaKeydown(event) {
+      var succ = document.getElementById("Success");
+      succ.style.display = "flex";
+      succ.innerHTML = "";
+      const textarea = event.target;
+      initialTextareaContentMap.set(textarea, textarea.value);
+    }
+
+    function handleTextareaInput(event) {
+      const textarea = event.target;
+      const initialContent = initialTextareaContentMap.get(textarea);
+      const currentContent = textarea.value;
+
+      if (currentContent.length > initialContent.length) {
+        textEdited = true;
+      } else if (currentContent.length < initialContent.length) {
+        textEdited = true;
+      }
+    }
+
+    window.addEventListener('load', setupExpandingTextareas);
+
+  </script>
+</body>
+
+</html>

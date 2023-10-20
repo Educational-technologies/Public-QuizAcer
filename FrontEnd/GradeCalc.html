@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>Final Grade Calculator</title>
+    <link rel="icon" href="/api/images/favicon" type="image/x-icon">
+    <link rel="manifest" href="/manifest.json">
+    <script src="/api/js/serviceworkerinit.js"></script>
+
+    <meta name="language" content="en">
+    <meta name="keywords"
+        content="flashcards, educational tools, interactive learning, study resources, calculator, grade, final grade calculator">
+    <meta name="description"
+        content="This calculator will determine what grade you need on your final exam in order to get a certain grade in a specific class.">
+
+    <meta property="og:title" content="Final Grade Calculator">
+    <meta property="og:description" content="This calculator will determine what grade you need on your final exam in order to get a certain grade in a specific class.">
+    <meta property="og:image" content="/api/images/512x512.png">
+    <meta property="og:url" content="https://QuizAcer.com/FinalGradeCalc">
+    <style>
+        .overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5);
+            display: none;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .popup {
+            background-color: #fff;
+            padding: 20px;
+            border-radius: 5px;
+            max-width: 400px;
+        }
+
+        .close {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            cursor: pointer;
+        }
+
+        body {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            background-color: #f2f2f2;
+        }
+
+        .container {
+            text-align: center;
+            background-color: #333;
+            padding: 20px;
+            border-radius: 5px;
+        }
+
+        input[type="text"] {
+            margin: 10px;
+            padding: 10px;
+            width: 200px;
+        }
+
+        input[type="submit"] {
+            background-color: #222;
+            color: #fff;
+            padding: 10px 20px;
+            border: none;
+            cursor: pointer;
+            border-radius: 5px;
+        }
+    </style>
+    <script>
+        function openPopup() {
+            var popup = document.getElementById("popup");
+            popup.style.display = "flex";
+        }
+
+        function closePopup() {
+            var popup = document.getElementById("popup");
+            popup.style.display = "none";
+        }
+
+        function handleSubmit(event) {
+            event.preventDefault();
+            var Current = parseFloat(document.getElementById("Text1").value);
+            var finalPercent = parseFloat(document.getElementById("Text2").value);
+            var wanted = parseFloat(document.getElementById("Text3").value);
+            var currentTotal = Current * (1 - (finalPercent * 0.01));
+            var needed1 = wanted - currentTotal;
+            var needed2 = (needed1 / finalPercent) * 100;
+            document.getElementById("Title").innerText = "You need a: ";
+            document.getElementById("Needed").innerText = needed2 + "% to get a " + wanted + "%";
+
+            openPopup();
+        }
+
+        window.addEventListener("click", closePopup);
+    </script>
+</head>
+
+<body>
+    <!-- <iframe src="/navbar" frameborder="0" scrolling="no" width="100%"></iframe> -->
+    <div class="container">
+        <form onsubmit="handleSubmit(event)">
+            <input type="text" id="Text1" placeholder="Current Grade"><br>
+            <input type="text" id="Text2" placeholder="Weight of Final"><br>
+            <input type="text" id="Text3" placeholder="Target Grade"><br>
+            <input type="submit" value="Submit">
+        </form>
+    </div>
+
+    <div id="popup" class="overlay">
+        <div class="popup">
+            <span class="close">&times;</span>
+            <h2 id="Title"></h2>
+            <p id="Needed"></p>
+        </div>
+    </div>
+</body>
+
+</html>
