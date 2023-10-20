@@ -1,6 +1,6 @@
 🚀 QuizAcer.com - Info 🚀
   ## To view the working site 
-  - Visit **QuizAcer.com**, 
+  - Visit **[QuizAcer.com](https://QuizAcer.com)**, 
   - Please contact QuizAcer@gmail.com if you have any problems!
 
 
